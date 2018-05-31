@@ -20,38 +20,12 @@ const instance = axios.create();
 instance.interceptors.response.use(function (response) {
 	//Token 非法时，重新登录
 	if(response.data.status == -2){
-
-		//尝试关闭Toast
-		Toast.close();
-		
-		Toast.show({
-			type: 1,
-			title: '登录过期，请重新登录',
-			time: 1500
-		});
-
-		Vue.prototype.$token = '';
-		//记录当前链接
-		if(window.location.hash === ''){
-			Global.LAST_URL = window.location.pathname + window.location.search;
-		}else{
-			Global.LAST_URL = window.location.hash;
-		}
-		//跳转 /Login
-		router.push({
-			path: '/Login'
-		})
 		return response;
 	}else{
 		return response;	
 	}
 }, function (error) {
 	console.log('axios request error: ' + error);
-	Toast.show({
-		type: 1,
-		title: '网络错误，请重试',
-		time: 1500
-	});
 	return Promise.reject(error);
 });
 
