@@ -2,7 +2,8 @@
   <div class="main">
     <el-container>
       <el-aside width="250px">
-        <h1>GET</h1> <el-button type="success" icon="el-icon-refresh" circle @click="getList"></el-button>
+        <h1>GET</h1>
+        <el-button type="success" icon="el-icon-refresh" circle @click="getList"></el-button>
         <el-button type="primary" round @click="newLink">添加接口</el-button>
         <h5 v-for="(item, index) of list" @click="listClick(item.id)">{{item.name}}</h5>
       </el-aside>
@@ -92,7 +93,7 @@ export default {
       this.$axios.request({
         url: "https://box.77lemon.top/getJsonById?id=" + id
       }).then(res => {
-        this.codemirrorValue = res.data.list.value;
+        this.codemirrorValue = decodeURI(res.data.list.value);
         this.id = id;
         for (let item of this.list) {
           if (id == item.id) {
@@ -113,7 +114,8 @@ export default {
         background: 'rgba(0, 0, 0, 0.7)'
       });
       this.$axios.request({
-        url: "https://box.77lemon.top/getJson"
+        url: "https://box.77lemon.top/getJson",
+        method: 'post',
       }).then(res => {
         loading.close();
         this.list = res.data.list;
@@ -124,10 +126,11 @@ export default {
         //编辑
         this.$axios.request({
           url: 'https://box.77lemon.top/updataJson',
+          method: 'post',
           params: {
             id: this.id,
             name: this.nameValue,
-            value: JSON.stringify(this.codemirrorValue)
+            value: encodeURIComponent(this.codemirrorValue)
           }
         }).then(res => {
           if (res.data.status == 0) {
@@ -149,9 +152,10 @@ export default {
         }
         this.$axios.request({
           url: 'https://box.77lemon.top/insJson',
+          method: 'post',
           params: {
             name: this.nameValue,
-            value: JSON.stringify(this.codemirrorValue)
+            value: encodeURIComponent(this.codemirrorValue)
           }
         }).then(res => {
           if (res.data.status == 0) {
@@ -173,7 +177,6 @@ export default {
     },
     refresh() {
       if (this.id) {
-
         this.listClick(this.id);
       } else {
         this.codemirrorValue = "";
@@ -183,9 +186,9 @@ export default {
       this.dialogVisible = true;
     },
     delreq() {
-      console.log('!!!')
       this.$axios.request({
         url: 'https://box.77lemon.top/delJson',
+        methods: 'post',
         params: {
           id: this.id
         }
@@ -299,7 +302,7 @@ body {
   color: #333;
 }
 
-.el-main h3{
+.el-main h3 {
   display: inline-block;
 }
 
